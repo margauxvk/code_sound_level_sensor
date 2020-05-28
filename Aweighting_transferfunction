@@ -1,0 +1,79 @@
+clear all;
+close all;
+clc;
+%Defining values of resistors and capacitors
+R1=6040;
+C1=2.2*10^(-9);
+C2=100*10^(-9);
+R2=82500;
+C3=100*10^(-9);
+R3=82500;
+C4=4.7*10^(-9);
+R4=150000;
+C5=4.7*10^(-9);
+R5=82500;
+C6=1*10^(-9);
+R6=20000;
+R7=1000;
+R8=7320;
+%Determining the transfer function 
+syms s Z1 Z2 Z3 Z4 Z5 V4 Vop Vout Vin V1 V2 V3 N D T4 T3 T2 T1 T0 T s;
+Z1=(1/(s*C5))+R5;
+Z2=((1/(s*C6))*R6)/((1/(s*C6))+R6);
+Z3=(R4*(Z1+Z2))/(R4+Z1+Z2)+(1/(s*C4));
+Z4=(R3*Z3)/(R3+Z3)+(1/(s*C3));
+Z5=(R2*Z4)/(R2+Z4)+(1/(s*C2));
+Z6=(Z5/(s*C1))/(1/(s*C1)+Z5);
+Vop=Vout*(R7)/(R7+R8);
+V4=Vop*((Z1+Z2)/Z1);
+V3=V4*((1/(s*C4)+(R4*Z1+R4*Z2)/(R4+Z1+Z2))/((R4*Z1+R4*Z2)/(R4+Z1+Z2)));
+V2=V3*((1/(s*C3)+(R3*Z3)/(R3+Z3))/((R3*Z3)/(R3+Z3)));
+V1=V2*((1/(s*C2)+(R2*Z4)/(R2+Z4))/((R2*Z4)/(R2+Z4)));
+Vin=V1*((R1+(Z5/(s*C1))/(1/(s*C1)+Z5))/((Z5/(s*C1))/(1/(s*C1)+Z5)));
+T4=V4/Vop;
+T3=V3/V4;
+T2=V2/V3;
+T1=V1/V2;
+T0=Vin/V1;
+T=Vout/Vin;
+
+%Determine the poles and zeros of the transfer function
+[N,D]=numden(T);
+zeros_T=vpa(solve(simplify(N)),4);
+poles_T=vpa(solve(simplify(D)),4);
+
+%%
+%Plotting transfer function and indicating poles and zeros
+figure
+fplot(T,[-100000,1000],'LineWidth',3)
+hold on
+plot(poles_T(6),0,'rx','MarkerSize',15);
+hold on
+plot(poles_T(5),0,'rx','MarkerSize',15);
+hold on
+plot(poles_T(4),0,'rx','MarkerSize',15);
+hold on
+plot(poles_T(3),0,'rx','MarkerSize',15);
+hold on
+plot(poles_T(2),0,'rx','MarkerSize',15);
+hold on
+plot(poles_T(1),0,'rx','MarkerSize',15);
+hold on
+plot(zeros_T(1),0,'go','MarkerSize',15);
+hold on
+plot(zeros_T(2),0,'go','MarkerSize',15);
+hold on
+plot(zeros_T(3),0,'go','MarkerSize',15);
+hold on
+plot(zeros_T(4),0,'go','MarkerSize',15);
+hold on
+plot(zeros_T(5),0,'go','MarkerSize',15);
+hold off
+ax = gca;
+ax.FontSize = 30;
+xlabel('Im[s]');
+ylabel('Amplitude');
+title('Transfer function of circuit');
+legend('Transfer function','p1=-97715i','p2=-60868i','p3=-4754i','p4=-613i','p5=-255i','p6=-46i')
+LEG.FontSize = 30;
+
