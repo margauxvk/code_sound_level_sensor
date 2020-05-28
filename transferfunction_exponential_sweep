@@ -1,0 +1,104 @@
+clear
+clc
+%measurement results with exponential sweep
+[in,fs1]=audioread('exponential_sweep_0tot20k_take2_in.wav');
+[out,fs2]=audioread('exponential_sweep_0tot20k_take2_out.wav');
+%simulation results with exponential sweep
+[in_sim,fs]=audioread('expsweep_30s_0tot20k.wav');
+[out_sim,fs]=audioread('exportexpsweep_30s_0tot20k.wav');
+
+%simulation results with linear sweep
+[num,txt,raw] = xlsread('lin_sweep_20tot20k');
+freq_spice_linsim=num(:,1);
+res_spice_linsim=num(:,7);
+
+%standard A-weighting
+[num,txt,raw] = xlsread('standardA_0tot20k');
+freq_spice_stand=num(1:end,1);
+res_spice_stand=num(1:end,4);
+in_s=in(:,1);
+out_s=out(:,1);
+
+%Take the usefull part of the signal
+start_i=63990;
+einde_i=start_i+(44100*30);
+in_edit=in_s(start_i:einde_i-1);
+out_edit=out_s(start_i:einde_i-1);
+in_edit_sim=in_sim;
+out_edit_sim=out_sim(1:(44100*30));
+time_vector=(1:(44100*30))./44100;
+%%
+%Plotting time signals
+time_vector_l=(1:(44100*33))./44100;
+figure
+plot(time_vector_l,in_s(1:44100*33))
+hold on
+plot(time_vector_l,out_s(1:44100*33))
+hold off
+ax = gca;
+ax.FontSize = 25;
+LEG.FontSize = 25;
+legend('input','output')
+title('Time signal of exponential sweep (0 to 20kHz)')
+xlabel('Time[s]')
+ylabel('Amplitude')
+
+%%
+%plotting magnitude spectrum
+fs=44100;
+freq_vect=1:fs/2;
+magnitude_in=20*log10(abs(fft(in_edit)));
+magnitude_out=20*log10(abs(fft(out_edit)));
+
+figure
+plot(freq_vect,magnitude_in(1:fs/2),'LineWidth',3);
+set(gca, 'XScale', 'log')
+title("Magnitude spectrum of exponential sweep (0 to 20kHz)");
+xlabel('Frequency[Hz]')
+ylabel('Magnitude spectrum[dB]')
+%%
+%%% Calculating transfer function %%%
+%Measurement results with exponential sweep
+%spectrum of input
+in_edit_four = fft(in_edit);
+%invert spectrum
+H = 1./in_edit_four;
+%IR of inverse spectrum
+h = ifft(H);
+TF = fft(out_edit) .* H;
+hsystem = ifft(TF);
+HSYS=fft(hsystem(1:fs));
+Tsystem=20*log10(abs(HSYS));
+
+%Simulations results with exponential sweep
+in_edit_four_sim = fft(in_edit_sim);
+%invert spectrum
+H_sim = 1./in_edit_four_sim;
+%IR of inverse spectrum
+h_sim = ifft(H_sim);
+TF_sim = fft(out_edit_sim) .* H_sim;
+hsystem_sim = ifft(TF_sim);
+HSYS_sim=fft(hsystem_sim(1:fs));
+Tsystem_sim=20*log10(abs(HSYS_sim));
+
+%%
+%plot standard A-weighting, transfer function linear sweep simulation,
+%transfer function exponential sweep simulation and measurement
+figure
+plot(freq_spice_stand(20:20000),res_spice_stand(20:20000),'-','LineWidth',3)
+hold on
+plot(freq_spice_linsim,res_spice_linsim,'--','LineWidth',3)
+hold on
+plot(freq_spice_stand(20:20000),(Tsystem(20:20000)),':','LineWidth',3)
+hold on
+plot(freq_spice_stand(20:20000),(Tsystem_sim(20:20000)),'LineWidth',3)
+hold off
+set(gca, 'XScale','log')
+ax = gca;
+ax.FontSize = 25;
+legend('standard', 'linear sweep spice ','exponential sweep measurements','exponential sweep simulations')
+title('Transfer function of A-weighting circuit')
+xlabel('Frequency [Hz]')
+ylabel('Gain [dB]')
+LEG.FontSize = 25;
+
