@@ -1,0 +1,29 @@
+clear all;
+clc;
+%Define variables
+Tsweep=30;
+fs =44100;
+fstart=1;
+fstop=20000;  
+A=0.22; %% amplitude
+
+% Effective length of sweep in samples
+Nsweep = ceil(Tsweep.*fs);
+% Time vector and actual duration of sweep
+t = (0:Nsweep-1).'/fs;
+T = Nsweep/fs;
+
+%% Sweep calculation
+w1 = 2*pi*fstart;
+w2 = 2*pi*fstop;
+a = w1;
+b = log(w2/w1)/T;
+phi = a/b * (exp(b*t) - 1);
+s = A*sin(phi);
+%%
+%plot exponential sweep
+figure
+plot (t,s)
+title('Exponential sweep 0 to 20 kHz')
+xlabel('Time [s]')
+ylabel('Amplitude')
