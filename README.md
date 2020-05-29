@@ -1,6 +1,6 @@
 In this Github the Matlab code used for analyzing the simulation results and measurement results is given as well as the code for creating signals for measurements or simulations.
 
-In the file 'transferfunction_exponential_sweep.m' the transferfunction of the A-weighting circuit is calculated out of the exponential sweep measurements.\
+In the file *'transferfunction_exponential_sweep.m'* the transferfunction of the A-weighting circuit is calculated out of the exponential sweep measurements.\
 To run the code 'transferfunction_exponential_sweep.m' the following files are used:
 1. The two wav files with the recordings of the measurement of the A-weighting circuit:
    - 'exponential_sweep_0tot20k_take2_in.wav' 
