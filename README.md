@@ -13,6 +13,10 @@ To run the code 'transferfunction_exponential_sweep.m' the following files are u
    The excel sheet with the calculated standard A-weighting values:
     'standardA_0tot20k'
 
-In the file 'Aweighting_transferfunction' the transferfunction of the A-weighting circuit in the Laplace domain is calculted
+In the file 'Aweighting_transferfunction.m' the transferfunction of the A-weighting circuit in the Laplace domain is calculted.
+
+In the file 'creation_burst_signal.m' the code for creating the burst signals using a Tukey window is written.
+
+In the file 'generation_exponential_sweep.m' the code for creating the exponential sweep is written.
 
     
